@@ -70,4 +70,29 @@ from deduped
 where row_num=1;  
 
 select * from dbo.retailcleaned;
-	
+
+CREATE VIEW dbo.DataQualitySummary
+AS
+SELECT
+    COUNT(*) AS TotalRows,
+
+    COUNT(InvoiceDate) AS ValidInvoiceDates,
+
+    COUNT(*) - COUNT(InvoiceDate) AS MissingInvoiceDates,
+
+    COUNT(Price) AS ValidPrices,
+
+    COUNT(*) - COUNT(Price) AS MissingPrices,
+
+    SUM(CASE WHEN Customer_ID IS NULL
+        THEN 1 ELSE 0 END) AS MissingCustomerIDs,
+
+    SUM(CASE WHEN Description IS NULL
+        THEN 1 ELSE 0 END) AS MissingDescriptions,
+
+    SUM(CASE WHEN Quantity <= 0
+        THEN 1 ELSE 0 END) AS InvalidQuantities
+
+FROM dbo.retailcleaned;
+
+select * from DataQualitySummary;
